@@ -1,0 +1,78 @@
+---
+title: "HW5"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+#question 1
+
+require(ggplot2)
+require(grid)
+diamonds
+class(diamonds)
+
+nums <- sapply(diamonds, is.numeric)
+
+diamonds[,nums]
+
+?paste
+
+nrow(diamonds)
+colnames(diamonds)
+colnames(diamonds[8])
+head(diamonds)
+length(diamonds[,nums])
+length(diamonds)
+
+
+
+colnames(diamonds[,nums][7])
+
+paste(rep(colnames(diamonds[,nums][1:7]),times=6:1), colnames(diamonds[,nums][7:1]), sep = "-"))
+
+rep(colnames(diamonds[,nums][1:7]),times=6:0)
+
+rep(colnames(diamonds[,nums][7:1]),times=0:6)
+
+c(colnames(diamonds[,nums][7:1]),colnames(diamonds[,nums][7:2]))
+
+?rep
+```
+
+```{r}
+
+pairs <- function(Test_Frame){
+vector1 <- character() #creates an empty charater vector
+vector2 <- numeric()
+string <- character()
+pcc <- numeric()
+
+for (i in  1:(length(Test_Frame)-1)) {
+  for (j in (i+1):length(Test_Frame)) {
+    string <- paste(colnames(Test_Frame[i]),colnames(Test_Frame[j]),sep="-")
+    vector1 <- c(vector1,string)
+    pcc <- cor(Test_Frame[i],Test_Frame[j],method = "pearson")
+    vector2 <- c(vector2,pcc)
+  }
+  }
+outputdataframe <- data.frame(vector1,vector2)
+return(outputdataframe)
+}
+
+pairs(diamonds[,nums])
+
+colnames(diamonds[,nums])
+head(diamonds)
+str(head(diamonds))
+cor(diamonds[,nums][1],diamonds[,nums][3])
+```
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

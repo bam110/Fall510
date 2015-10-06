@@ -1,0 +1,114 @@
+---
+title: "HW4"
+output: html_document
+---
+
+```{r}
+#question 1a
+seq(1,20) #uses the seq function
+
+#question 1b
+seq(20,1)
+
+#question 1c
+c(1:20,19:1)
+
+#question 1d
+tmp <- c(4,6,3) #uses the <- to assign the variable name
+tmp
+
+#question 1e
+rep(c(4,6,3), times=10) #repeats the vector 10 times
+
+#question 1f
+rep(c(4,6,3), len=31)  #repeats until the length of the output vector is 31
+
+#question 1g
+rep(c(4,6,3), times=c(10,20,30)) #repeats 4 10 times, 6 20 times, and 3 30 times
+```
+
+```{r}
+#question 2
+x <- seq(3,6,by=0.1) #creates a vector of 3,3.1,3.2,...,5.9,6
+exp(x)*cos(x)
+
+```
+
+```{r}
+#question 3a
+a <- seq(3,36,by=3) #creates a vector of 3,6,9...,36
+b <- seq(1,34,by=3) #creates a vector of 1,4,7...,34
+(0.1^a)*(0.2^b)
+
+#question 3b
+(2^(seq(1,25)))/(seq(1,25)) #seq(1,25) is the vector 1,2,3...24,25
+```
+
+```{r}
+#question 4a
+i1 <- seq(10,100) #creates the vector of 10 to 100
+sum((i1^3)+4*(i1^2))
+
+#question 4b
+i2 <- seq(1,25) #creates the vector of 1 to 25
+sum(((2^i2)/i2)+((3^i2)/(i2^2)))
+```
+
+```{r}
+#question 5a
+paste("label", 1:30) #uses the paste function and the default separation is a space
+
+#question 5b
+paste("fn", 1:30,sep="") #uses the paste function with no separation
+```
+
+```{r}
+set.seed(50)
+xVec <- sample(0:999, 250, replace=T)
+yVec <- sample(0:999, 250, replace=T)
+
+#question 6a
+yVec[-1] - xVec[-length(xVec)] #removes the first element of yVec and the last element of xVec
+
+#question 6b
+sin(yVec[-length(yVec)])/cos(xVec[-1]) #removes the last element of yVec and the first element of xVec
+
+#question 6c
+xVec[-c(249,250)] + 2*xVec[-c(1,250)] - xVec[-c(1,2)] #removes the last two elements of xVec in the first term, removes the first and last element of xVec in the second term, and removes the first two elements of xVec in the third term
+
+#question 6d
+sum(exp(-xVec[-1])/(xVec[-length(xVec)]+10)) #removes the first element of xVec in the numerator and the last element of xVec in the denominator
+```
+
+```{r}
+#question 7a
+yVec[yVec>600] #returns the values of yVec that are greater than 600
+
+#question 7b
+which(yVec>600) #returns the index positons in yVec of values greater than 600
+
+#question 7c
+xVec[yVec>600] #returns the values in xVec which correspond to the values in yVec which are greater than 600
+
+#question 7d
+sqrt(abs(xVec-mean(xVec))) #uses the mean function to calculate the mean of xVec
+
+#question 7e
+sum(yVec>max(yVec)-200) #returns the number of values in yVec that are within 200 of the maximum value in yVec
+
+#question 7f
+sum(xVec%%2==0) #returns the number of values in xVec which are divisble by 2 using the mod operator %%
+
+#question 7g
+xVec[order(yVec)] #sorts the values of xVec in order of increasing values in yVec
+
+#question 7h
+yVec[seq(1,250,by=3)] #returns the elements of yVec in the positions 1,4,7,..,250
+```
+
+```{r}
+#question 8
+test <- seq(2,38,by=2) #creates the vector 2,4,6...,38
+1 + sum(cumprod(test/(test+1))) #uses the cumprod function to do a cumulative multiplication, then uses a sum function to add the elements
+```
+
