@@ -1,0 +1,70 @@
+---
+title: "HW5"
+output: html_document
+---
+
+```{r}
+#question 1
+
+require(ggplot2) #load the ggplot2 package
+require(grid) #load the grid package
+
+
+columntest <- function(Test_Frame){
+  numtest <- sapply(Test_Frame, is.numeric) #applies the is.numeric function to each column and returns True if the column is numeric and False if it is not
+
+  output_frame <- Test_Frame[,numtest] #returns only the columns where the is.numeric function is true so returns only the columns that are numberic
+  return(output_frame) #returns the numeric columns from the Test_Frame
+}
+
+columntest(diamonds)
+```
+
+```{r}
+#question 2
+pairs <- function(Test_Frame){
+vector1 <- character() #creates an empty character vector
+vector2 <- numeric() #creates an empty numeric vector
+string <- character() #creates an empty character vector
+pcc <- numeric() #creates an empty numberic vector
+
+for (i in  1:(length(Test_Frame)-1)) { #gets the first column for each pair. This for loop starts at the first column and ends at the second to last column because the last column will never be the first member of the pair.
+  for (j in (i+1):length(Test_Frame)) { #gets the second column for each pair. This for loop starts at the column after the first member of the pair and ends at last column. This way each column is paired with every other column.
+    string <- paste(colnames(Test_Frame[i]),colnames(Test_Frame[j]),sep="-") #uses the paste function to form the string of the column names seperated by a "-"
+    vector1 <- c(vector1,string) #places each pair of column names in a vector
+    pcc <- cor(Test_Frame[i],Test_Frame[j],method = "pearson") #uses the cor function to calculate the pearson correlation coefficient for each pair of variables
+    vector2 <- c(vector2,pcc) #places each peason correlation coefficient in a vector
+  }
+  }
+outputdataframe <- data.frame(vector1,vector2) #creates a data frame of the vector with the column names and the vector with the correlation coefficient
+return(outputdataframe) #returns the data frame
+}
+
+x <- columntest(diamonds) #returns the numeric columns in the diamonds data frame
+
+pairs(x) #outputs a data frame with each pair of variable names in the first column and the corresponding pearson correlation coefficient in the second column for the numberic columns in the diamonds data frame
+
+```
+
+```{r}
+#question 3
+require(ggplot2)
+require(grid)
+
+scatter <- function(Data_Frame){
+  nums <- sapply(Data_Frame,is.numeric) #applies the is.numeric function to each column and returns True if the column is numeric and False if it is not
+  Test_frame <- Data_Frame[,nums] #returns only the columns where the is.numeric function id true so returns only the columns that are numberic
+  for (i in 1:(length(Test_frame)-1)){ #gets the first column for each pair. This for loop starts at the first column and ends at the second to last column because the last column will never be the first member of the pair.
+    for (j in (i+1):length(Test_frame)){ #gets the second column for each pair. This for loop starts at the column after the first member of the pair and ends at last column. This way each column is paired with every other column.
+      Test_plot <- ggplot(Test_frame, aes(x=Test_frame[[i]],y=Test_frame[[j]]),environment = environment()) #sets the data frame to be the Test_Frame and sets the x and y aesthetics to be the two variables from the data frame. Also uses the environment function to assume a local environment and workaround the scoping issue in ggplot
+      Test_plot <- Test_plot + geom_point() #uses the geom_point function to create a scatter plot
+      Test_plot <- Test_plot + labs(x=names(Test_frame)[[i]],y=names(Test_frame)[[j]],title=cor(Test_frame[i],Test_frame[j],method = "pearson")) #adds the label for the x axis and the y axis and adds the pearson correlation coefficient as the title of the scatter plot
+      print(Test_plot) #returns the scatter plot
+      }
+  }
+}
+
+scatter(diamonds)
+
+```
+
