@@ -1,0 +1,79 @@
+---
+title: "Test"
+output: html_document
+---
+
+```{r}
+#question 1
+require(ggplot2) #loads the ggplot2 package so the diamonds data frame can be used
+
+rowc <- nrow(mtcars) #this line sets the rowc variable to be the number of rows in the mtcars data frame
+rowd <- nrow(diamonds) #this line sets the rowd variable to be the number of rows in the diamonds data frame
+
+col <- mtcars$vs #this line sets the col variable to be the vs column in the mrcars data frame
+
+col1 <- length(which(col == 1)) #this line sets the col1 variable to be the number of rows with a 1 in the vs column
+col0 <- length(which(col == 0)) #this line sets the col0 variable to be the number of rows with a 0 in the vs column
+
+a <- round(rowd*col1/rowc) #this line multiplies the number of rows in the diamonds data frame by the number of 1s in the vs column and divides by the total number of rows in the vs column. This number is rounded to an integer in case there is a decimal. This number is assigned to the variable a. This gives the number of TRUEs in the logical column.
+b <- round(rowd*col0/rowc) #this line multiplies the number of rows in the diamonds data frame by the number of 0s in the vs column and divides by the total number of rows in the vs column. This number is rounded to an integer in case there is a decimal. This number is assigned to the variable b.This gives the number of FALSEs in the logical column.
+
+tfvec <- rep(c(TRUE,FALSE),times=c(a,b)) #this line creates a logical vector called tfvec with a TRUE rows and b FALSE rows
+
+diamonds$logical <- tfvec #this adds the tfvec vector as a column to the diamonds data frame. The column is named logical.
+
+```
+
+```{r}
+#question 2
+logorfac <- function(x){ #this line creates a function logorfac with an argument x
+  y <- is.logical(x) | is.factor(x) #this line sets y to TRUE if the is.logical function returns TRUE or if the is.factor function returns TRUE. It sets y to FALSE otherwise 
+  return(y) #this line returns the TRUE or FALSE value for y
+}
+
+lofcols <- sapply(diamonds,logorfac) #this line applies the logorfac function to each column in the diamonds data frame
+
+extract <- diamonds[,lofcols] #this line sets the extract variable to be only the columns that return TRUE for the lofcols function. This line sets the extract variable to be a data frame of the logical and factor columns from the diamonds data frame.
+```
+
+```{r}
+#question 3
+logorfac <- function(x){ #this line creates a function logorfac with an argument x
+  y <- is.logical(x) | is.factor(x) #this line sets y to TRUE if the is.logical function returns TRUE or if the is.factor function returns TRUE. It sets y to FALSE otherwise 
+  return(y) #this line returns the TRUE or FALSE value for y
+}
+
+lofcols <- sapply(diamonds,logorfac) #this line applies the logorfac function to each column in the diamonds data frame
+
+extract <- diamonds[,lofcols] #this line sets the extract variable to be the logical or factor columns in the diamonds data frame
+
+for (i in 1:length(extract)){ #for each column in the extract data frame
+  bargraph <- ggplot(extract, aes(x=extract[[i]])) #this line sets extract as the data frame and the ith column in extract as the x aesthetic 
+  bargraph <- bargraph + geom_bar(colour="gray",fill="gray") #this line creates a bargraph with bars that have a gray outline and gray fill
+  bargraph <- bargraph + labs(x = names(extract)[[i]]) #this line sets the label of the x axis to be the name of the ith column in the extract data frame
+  print(bargraph) #this line prints the bar graph. Since this line is inside the for loop, it will print a bar graph each time it goes through the loop
+}
+
+```
+
+```{r}
+#question 4
+logorfac <- function(x){ #this line creates a function logorfac with an argument x
+  y <- is.logical(x) | is.factor(x) #this line sets y to TRUE if the is.logical function returns TRUE or if the is.factor function returns TRUE. It sets y to FALSE otherwise 
+  return(y) #this line returns the TRUE or FALSE value for y
+}
+
+lofcols <- sapply(diamonds,logorfac) #this line applies the logorfac function to each column in the diamonds data frame
+
+extract <- diamonds[,lofcols] #this line sets the extract variable to be the logical or factor columns in the diamonds data fram
+
+freqlist <- vector(mode = "list") #this line creates a list called freqlist
+
+for (i in 1:length(extract)){ #for each column in the extract data frame
+  freqtable <- table(extract[[i]]) #this line creates a frequency table for the ith column in the extract data frame
+  freqlist[[i]] <- freqtable #this line adds the frequency table as the ith member of the list
+}
+freqlist #this line returns the list of frequency tables
+
+
+```
