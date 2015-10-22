@@ -1,0 +1,143 @@
+---
+title: "HW6"
+output: html_document
+---
+
+
+```{r}
+explore <- function(inputdf,bin_sizes,threshold){ #This line creates a function named explore which takes inputdf, bin_sizes, and threshold as input parameters. Inputdf is a data frame. Bin_sizes is a vector of bin sizes for the histograms. Threshold is a number which is the upper limit for the correlation coefficients. 
+  
+  var_num <- inputdf[which(lapply(inputdf, is.numeric) == TRUE)] #This line creates a data frame var_num which is all of the numeric columns from inputdf
+  
+  var_factor <- inputdf[which(lapply(inputdf, is.factor) == TRUE)] #This line creates a data frame var_factor which is all of the factor columns from inputdf
+  
+  is.binary <- function(x){ #this line creates a function is.binary with an input parameter x. The is.binary function will return TRUE if x is binary and will return FALSE otherwise
+  col1 <- length(which(x == 1)) #col1 is the number of rows in x which are equal to 1
+  col0 <- length(which(x == 0)) #col0 is the number of rows in x which are equal to 0
+  y <- (length(x) == col0+col1) #y is TRUE if the length of x is equal to the number of 0 rows plus the number of 1 rows. In this case, x is a binary variable. Y is FALSE if the length of x is not equal to the number of 0 rows plus the number of 1 rows. In this case, x is not a binary variable
+  return(y) #this line returns the TRUE or FALSE value of y
+}
+  var_bin <- inputdf[which(lapply(inputdf, is.binary) == TRUE)] #this line creates a data frame var_bin which is all of the binary columns from inputdf
+  
+#question 1
+if (length(var_num) > 0){ #if there are one or more numeric columns
+  for (i in 1:length(var_num)){ #for each numeric column in the data frame
+    for (bins in 1:length(bin_sizes)){ #for each bin size in the bin_sizes vector
+      num_bins <- (max(var_num[[i]])-min(var_num[[i]]))/bin_sizes[bins] #this calculates the number of bins based on the bin size from the bin_sizes vector
+      col_mean <- mean(var_num[[i]]) #col_mean is the mean of the ith numeric column
+      Num_Plot <- ggplot(var_num, aes(x=var_num[[i]]), environment=environment()) #this line sets var_num to be the data frame for ggplot and sets the ith column to be the x aesthetic. This line also uses the environment parameter to workaround the scoping issue.
+      Num_Plot <- Num_Plot + geom_histogram(colour='blue', fill='blue', binwidth=num_bins) + labs(x=names(var_num)[[i]]) + geom_vline(xintercept=col_mean, colour='red') #this line creates the histogram. The color of the bars is set to blue and the binwidth is set to num_bins. The label for the x axis is set to be the name of the ith numeric column. A red vertical line for the mean is added.
+      print(Num_Plot) #this line prints the histogram using counts for each numeric column
+      print(Num_Plot + aes(y=..density..) + labs(y="Density")) #this line sets the y aesthetic to be density and sets the label of the y axis to be Density. The histogram using density is printed for each numeric column
+      }
+    }
+  }
+#question 2
+if (length(var_factor) > 0){ #if there are one or more factor columns
+for (i in 1:length(var_factor)){ #for each factor column in the data frame
+  bargraph <- ggplot(var_factor,aes(x=var_factor[[i]]), environment=environment()) #this line sets var_factor to be the data frame for ggplot and sets the ith column to be the x aesthetic. This line also uses the environment parameter to workaround the scoping issue.
+  bargraph <- bargraph + geom_bar(colour="gray",fill="gray") #this line creates a bar graph and sets the color of the bars to be gray
+  bargraph <- bargraph + labs(x = names(var_factor)[[i]]) #this line sets the label of the x axis to be the name of the ith column
+  print(bargraph) #this line prints the bargraph for each factor column
+}
+}
+
+if (length(var_bin) > 0){ #if there are one or more binary columns
+for (i in 1:length(var_bin)){ #for each binary column in the data frame
+  bargraph <- ggplot(var_bin, aes(x=var_bin[[i]]), environment=environment()) #this line sets var_bin to be the data frame for ggplot and sets the ith column to be the x aesthetic. This line also uses the environment paramter to workaround the scoping issue. 
+  bargraph <- bargraph + geom_bar(colour="gray",fill="gray") #this line creates a bar graph and sets the color of the bars to be gray
+  bargraph <- bargraph + labs(x = names(var_bin)[[i]]) #this line sets the label of the x axis to be the name of the ith column
+  print(bargraph) #this line prints the bargraph for each binary column
+} 
+}
+
+binorfac <- function(x){ #this line creates a function binorfac with an input parameter x
+  y <- is.binary(x) | is.factor(x) #y is set to is.binary(x) or is.factor(x). Y is TRUE if is.binary(x) is TRUE or is.factor(x) is TRUE. Y is FALSE otherwise.
+  return(y) #this line returns the TRUE or FALSE value of y
+}
+
+var_binorfac <- inputdf[which(lapply(inputdf, binorfac) == TRUE)] #this line creates a data frame var_binorfac which is all of the binary or factor variables from inputdf
+
+#question 4a
+tablelist <- vector(mode = "list") #this line creates a list called tablelist
+
+if (length(var_binorfac) > 0 ){ #if there are one or more binary or factor columns
+for (i in 1:length(var_binorfac)){ #for each binary or factor column in the data frame
+  freq_table <- table(var_binorfac[[i]]) #this line creates a frequency table for the ith column and names the table freq_table
+  tablelist[[i]] <- freq_table #this line adds freq_table as the ith element of the tablelist
+}
+}
+
+#question 4bi
+summarylist <- vector(mode="list") #This line creates a list called summarylist
+
+if (length(var_num) > 0){ #if there are one or more numeric columns
+for (i in 1:length(var_num)){ #for each numeric column in the data frame
+  summarytable <- summary(var_num[[i]]) #this line creates a summary statistics table for the ith columns and names the table summarytable
+  summarylist[[i]] <- summarytable #this line adds summarytable as the ith element of summarylist
+}
+
+corr_a <- cor(var_num, method="pearson") #this line creates a matrix of the pearson correlation coefficients using the cor function
+
+r_square <- NULL #this line creates a variable r_squre and sets it to be NULL
+rsq_names <- NULL #this line creates a variable rsq_names and sets it to be NULL
+corr_list <- NULL #this line creates a variable corr_list and sets it to be NULL
+corr_names <- NULL #this line creates a variable corr_names and sets it to be NULL
+
+len <- length(corr_a[1,]) #this line calculates the length of the first row of the corr_a matrix
+
+#question 4bii
+for (i in 1:(len-1)){ #this for loop is to get the first member of each pair of numeric variables. This for loop starts at the first column and ends at the second to last because the last column will not be the first member of the pair.
+  for (j in (i+1):len){ #this for loop is to get the second member of each pair of numeric variables. This for loop starts at the column after i and ends at the last column. This way each column is paired with every other column.
+    pair_name <- paste(names(corr_a[,1])[[i]],names(corr_a[1,])[[j]],sep="-") #this line creates a string with the ith column name and the jth column name seperated by a dash 
+    rsq_names <- c(rsq_names, pair_name) #this line adds the pair_name string as an element to the rsq_names vector
+    
+    #question 3
+    r_square <- c(r_square, corr_a[i,j]^2) #this line adds the r-square value from the ith row and jth column as an element to the r_square vector
+    
+    #question 4biii
+     if (corr_a[i,j] > threshold) { #if the correlation coefficient is greater than the threshold
+      corr_names <- c(corr_names, pair_name) #this line adds the pair_name string as an element to the corr_names vector
+      corr_list <- c(corr_list, corr_a[i,j]) #this line adds the correlation coeffiecient from the ith row and jth column as an element to the corr_list vector 
+      }
+  }
+}
+
+rsq_df <- data.frame(cbind(rsq_names, r_square)) #this line creates a data frame from the rsq_names and r_squared vectors
+names(rsq_df)[1] <- "Pair" #this line sets the name of the first column in the rsq_df data frame to be "Pair"
+names(rsq_df)[2] <- "R-Square Value" #this line sets the name of the second column in the rsq_df data frame to be "R-Square Value"
+corr_df <- data.frame(cbind(corr_names, corr_list)) #this line creates a data frame from the corr_names and corr_list vectors
+names(corr_df)[1] <- "Pair" #this line sets the name of the first column in the corr_df data frame to be "Pair"
+names(corr_df)[2] <- "Correlation Coefficient" #this line sets the name of the second column in the corr_df data frame to be "Correlation Coefficient"
+question_4_list <- list("Frequency_tables"=tablelist, "Summary_tables"=summarylist, "R-square"=rsq_df, "Correlation"=corr_df) #this line creates a list of the tablelist, summarylist, rsq_df, and corr_df
+
+print(question_4_list) #this line returns the question_4_list
+}
+
+}
+
+require(ggplot2) #this line loas the ggplot2 package so the diamonds data frame can be used
+
+#this section is from Test 1 which adds the logical column to the diamonds data frame
+rowc <- nrow(mtcars) #this line sets the rowc variable to be the number of rows in the mtcars data frame
+rowd <- nrow(diamonds) #this line sets the rowd variable to be the number of rows in the diamonds data frame
+
+col <- mtcars$vs #this line sets the col variable to be the vs column in the mrcars data frame
+
+col1 <- length(which(col == 1)) #this line sets the col1 variable to be the number of rows with a 1 in the vs column
+col0 <- length(which(col == 0)) #this line sets the col0 variable to be the number of rows with a 0 in the vs column
+
+a <- round(rowd*col1/rowc) #this line multiplies the number of rows in the diamonds data frame by the number of 1s in the vs column and divides by the total number of rows in the vs column. This number is rounded to an integer in case there is a decimal. This number is assigned to the variable a. This gives the number of TRUEs in the logical column.
+b <- round(rowd*col0/rowc) #this line multiplies the number of rows in the diamonds data frame by the number of 0s in the vs column and divides by the total number of rows in the vs column. This number is rounded to an integer in case there is a decimal. This number is assigned to the variable b. This gives the number of FALSEs in the logical column.
+
+tfvec <- rep(c(TRUE,FALSE),times=c(a,b)) #this line creates a logical vector called tfvec with a TRUE rows and b FALSE rows
+
+diamonds$logical <- tfvec #this adds the tfvec vector as a column to the diamonds data frame. The column is named logical.
+
+#question 5
+explore(diamonds, c(5,20,50), 0.25) #this line runs the explore function with diamonds with the logical column as the data frame, a vector of bin sizes c(5,20,50), and 0.25 as the corrrelation threshold
+```
+
+```{r}
+explore(mtcars,c(5,20,50),0.25) #this line runs the explore function with mstcars as the data frame, a vector of bin sizes c(5,20,50), and 0.25 as the corrrelation threshold
+```
