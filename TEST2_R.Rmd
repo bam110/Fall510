@@ -1,0 +1,564 @@
+---
+title: "TEST2_R"
+output: html_document
+---
+
+```{r}
+uciaddress <- "http://archive.ics.uci.edu/ml/machine-learning-databases/" #this line creates the uciaddress variable and sets it to be the UCI website
+dataset <- "abalone/abalone.data" #this line creates the dataset variable and sets it to be the path of the abalone.data dataset
+getdataset <- paste(uciaddress, dataset, sep="") #this line creates the getdataset variable and sets it to be the concatenation of the uciaddress and dataset variables
+abalone <- read.csv(getdataset) #this line imports the abalone.data csv from the URL and returns a data frame. This data frame is given the variable name abalone.
+
+
+colnames(abalone) <- c("Gender","Length","Diameter","Height", "Whole_wgt","Shucked_wgt", "Viscera wgt","Shell wgt", "Rings") #this line creates the colnames for the abalone data frame
+
+randomSample = function(dataframe,n,replacement) { #this line creates the randomSample function with the inputs dataframe, n, and replacement
+  return (dataframe[sample(nrow(dataframe), n, replace=replacement),]) } #this line sets the randomSample function to return a dataframe which is a sample of n rows from the input dataframe. The replacement for the sampling depends on the input from the user.
+
+library(ggplot2) #this line loads the ggplot2 package
+library(gridExtra) #this line loads the gridExtra package
+
+```
+
+```{r}
+#problem 1 and 2
+
+row1 <- round(nrow(abalone)/100) #this line calculates the number of rows for the 1 percent sample. It uses the round function in case the product is a decimal
+sample1percent <- randomSample(abalone, row1, FALSE) #this line takes a 1 percent random sample from the abalone data frame
+histogram1 <- ggplot(sample1percent, aes(x=sample1percent$Whole_wgt)) + geom_histogram() #this line creates a histogram of the Whole_wgt column from the 1 percent sample
+percent1 <- c(min(sample1percent$Whole_wgt), max(sample1percent$Whole_wgt), mean(sample1percent$Whole_wgt), var(sample1percent$Whole_wgt)) #this line creates a vector with the min, max, mean, and variance from the 1 percent sample
+
+row10 <- round(nrow(abalone)*10/100) #this line calculates the number of rows for the 10 percent sample. It uses the round function in case the product is a decimal
+sample10percent <- randomSample(abalone, row10, FALSE) #this line takes a 10 percent random sample from the abalone data frame
+histogram10 <- ggplot(sample10percent, aes(x=sample10percent$Whole_wgt)) + geom_histogram() #this line creates a histogram of the Whole_wgt column from the 10 percent sample
+percent10 <- c(min(sample10percent$Whole_wgt), max(sample10percent$Whole_wgt), mean(sample10percent$Whole_wgt), var(sample10percent$Whole_wgt)) #this line creates a vector with the min, max, mean, and variance from the 10 percent sample
+
+row25 <- round(nrow(abalone)*25/100) #this line calculates the number of rows for the 25 percent sample. It uses the round function in case the product is a decimal
+sample25percent <- randomSample(abalone, row25, FALSE) #this line takes a 25 percent random sample from the abalone data frame
+histogram25 <- ggplot(sample25percent, aes(x=sample25percent$Whole_wgt)) + geom_histogram() #this line creates a histogram of the Whole_wgt column from the 25 percent sample
+percent25 <- c(min(sample25percent$Whole_wgt), max(sample25percent$Whole_wgt), mean(sample25percent$Whole_wgt), var(sample25percent$Whole_wgt)) #this line creates a vector with the min, max, mean, and variance from the 25 percent sample
+
+row50 <- round(nrow(abalone)*50/100) #this line calculates the number of rows for the 50 percent sample. It uses the round function in case the product is a decimal.
+sample50percent <- randomSample(abalone, row50, FALSE) #this line takes a 50 percent random sample from the abalone data frame
+histogram50 <- ggplot(sample50percent, aes(x=sample50percent$Whole_wgt)) + geom_histogram() #this line creates a histogram of the Whole_wgt column from the 50 percent sample
+percent50 <- c(min(sample50percent$Whole_wgt), max(sample50percent$Whole_wgt), mean(sample50percent$Whole_wgt), var(sample50percent$Whole_wgt)) #this line creates a vector with the min, max, mean, and variance from the 50 percent sample
+
+row80 <- round(nrow(abalone)*80/100) #this line calculates the number of rows for the 80 percent sample. It uses the round function in case the product is a decimal.
+sample80percent <- randomSample(abalone, row80, FALSE) #this line takes a 80 percent random sample from the abalone data frame
+histogram80 <- ggplot(sample80percent, aes(x=sample80percent$Whole_wgt)) + geom_histogram() #this line creates a histogram of the Whole_wgt column from the 80 percent sample
+percent80 <- c(min(sample80percent$Whole_wgt), max(sample80percent$Whole_wgt), mean(sample80percent$Whole_wgt), var(sample80percent$Whole_wgt)) #this line creates a vector with the min, max, mean, and variance from the 80 percent sample
+
+row100 <- nrow(abalone) #this line calculates the number of rows for the 100 percent sample
+sample100percent <- randomSample(abalone, row100, FALSE) #this line takes a 100 percent random sample from the abalone data frame
+histogram100 <- ggplot(sample100percent, aes(x=sample100percent$Whole_wgt)) + geom_histogram() #this line creates a histogram of the Whole_wgt column from the 100 percent sample
+percent100 <- c(min(sample100percent$Whole_wgt), max(sample100percent$Whole_wgt), mean(sample100percent$Whole_wgt), var(sample100percent$Whole_wgt)) #this line creates a vector with the min, max, mean, and variance from the 100 percent sample
+
+
+#problem 1
+problem1df <- data.frame(percent1,percent10,percent25,percent50,percent80,percent100) #this line creates a data frame of the vectors of the min, max, mean, and variance for each sample size
+rownames(problem1df) <- c("SampleMin","SampleMax","SampleMean","SampleVar") #this column creates the row names for the data frame
+colnames(problem1df) <- c("1%Sample","10%Sample","25%Sample","50%Sample","80%Sample","100%Sample") #this column creates the column names for the data frame
+problem1df #this column returns the data frame with the min, max, mean, and variance for each sample size
+
+
+#problem 2
+grid.arrange(histogram1,histogram10,histogram25,histogram50,histogram80,histogram100, ncol=2) #this line creates a grid of the histograms for each sample size
+
+```
+
+```{r}
+#problem 3
+OnePercentMean <- numeric() #this line creates an empty numeric vector
+TenPercentMean <- numeric() #this line creates an empty numeric vector
+TwentyFivePercentMean <- numeric() #this line creates an empty numeric vector
+FiftyPercentMean <- numeric() #this line creates an empty numeric vector
+EightyPercentMean <- numeric() #this line creates an empty numeric vector
+
+for (i in 1:1000){ #this for loop will repeat 1000 times 
+  onesample <- randomSample(abalone, row1, FALSE) #this line takes a 1 percent sample from the abalone data frame
+  OnePercentMean[[i]] <- mean(onesample$Whole_wgt) #this line calculates the mean of the 1 percent sample and adds it to the vector
+  
+  tensample <- randomSample(abalone, row10, FALSE) #this line takes a 10 percent sample from the abalone data frame
+  TenPercentMean[[i]] <- mean(tensample$Whole_wgt) #this line calculates the mean of the 10 percent sample and adds it to the vector
+  
+  twentyfivesample <- randomSample(abalone, row25, FALSE) #this line takes a 25 percent sample from the abalone data frame
+  TwentyFivePercentMean[[i]] <- mean(twentyfivesample$Whole_wgt) #this line calculates the mean of the 25 percent sample and adds it to the vector
+  
+  fiftysample <- randomSample(abalone, row50, FALSE) #this line takes a 50 percent sample from the abalone data frame
+  FiftyPercentMean[[i]] <- mean(fiftysample$Whole_wgt) #this line calculates the mean of the 50 percent sample and adds it to the vector
+  
+  eightysample <- randomSample(abalone, row80, FALSE) #this line takes a 80 percent sample from the abalone data frame
+  EightyPercentMean[[i]] <- mean(eightysample$Whole_wgt) #this line calculates the mean of the 80 percent sample and adds it to the vector
+}
+
+problem3df <- data.frame(OnePercentMean,TenPercentMean,TwentyFivePercentMean,FiftyPercentMean,EightyPercentMean) #this line creates the data frame from the vectors of means for each sample size
+
+
+```
+
+```{r}
+#problem 4
+outputlist <- list() #this line creates an empty vector
+
+for (i in 1:length(problem3df)){ #for the length of the problem3df data frame
+  x <- problem3df[[i]] #this line sets x to be the ith column of the problem3df data frame
+  outputlist[[i]] <- ggplot(data.frame(x),aes(x)) + geom_histogram() + labs(x=names(problem3df)[[i]]) #this line creates a ggplot of the ith column problem3df data frame and adds a label with the column name
+}
+
+problem4histogram <- ggplot(sample100percent,aes(x=sample100percent$Whole_wgt)) + geom_histogram() #this line creates a histogram of the Whole_wgt column from the 100 percent sample
+
+grid.arrange(outputlist[[1]],outputlist[[2]],outputlist[[3]],outputlist[[4]],outputlist[[5]],problem4histogram, ncol=2) #this line creates a grid of histgrams with the histograms of the means from each size and the histogram of the 100% sample
+
+```
+
+```{r}
+#problem 5
+percent1 <- c(min(problem3df$OnePercentMean),max(problem3df$OnePercentMean),mean(problem3df$OnePercentMean),var(problem3df$OnePercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 1 percent sample means
+percent10 <- c(min(problem3df$TenPercentMean),max(problem3df$TenPercentMean),mean(problem3df$TenPercentMean),var(problem3df$TenPercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 10 percent sample means
+percent25 <- c(min(problem3df$TwentyFivePercentMean),max(problem3df$TwentyFivePercentMean),mean(problem3df$TwentyFivePercentMean),var(problem3df$TwentyFivePercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 25 percent sample means
+percent50 <- c(min(problem3df$FiftyPercentMean),max(problem3df$FiftyPercentMean),mean(problem3df$FiftyPercentMean),var(problem3df$FiftyPercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 50 percent sample means
+percent80 <- c(min(problem3df$EightyPercentMean),max(problem3df$EightyPercentMean),mean(problem3df$EightyPercentMean),var(problem3df$EightyPercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 80 percent sample means
+percent100 <- c(min(sample100percent$Whole_wgt),max(sample100percent$Whole_wgt),mean(sample100percent$Whole_wgt),var(sample100percent$Whole_wgt)) #this line creates a vector of the min, max, mean, and variance of the 100 percent sample
+
+problem5df <- data.frame(percent1,percent10,percent25,percent50,percent80,percent100) #this line creates a data frame of the vectors of the min, max, mean, and variance of the mean column for each sample size. The vector of the min, max, mean, and variance of the 100 percent sample is also included.
+
+rownames(problem5df) <- c("ReSampleMin", "ReSampleMax", "ReSampleMean", "ReSampleVariance") #this line creates the row names for the problem5df data frame
+
+colnames(problem5df) <- c("1%Sample","10%Sample","25%Sample","50%Sample","80%Sample","100%Sample") #this line creates the column names for the problem5df data frame
+
+problem5df #this line returns the problem5df
+
+totaldf <- rbind(problem1df, problem5df) #this line appends the problem5df to the data frame created in problem 1, the problem1df
+totaldf #this line returns the totaldf
+```
+
+```{r}
+#problem 6
+Mean1 <- totaldf[3,1] #this line gets the mean of the 1 percent sample from the totaldf
+Mean10 <- totaldf[3,2] #this line gets the mean of the 10 percent sample from the totaldf
+Mean25 <- totaldf[3,3] #this line gets the mean of the 25 percent sample from the totaldf
+Mean50 <- totaldf[3,4] #this line gets the mean of the 50 percent sample from the totaldf
+Mean80 <- totaldf[3,5] #this line gets the mean of the 80 percent sample from the totaldf
+
+Mean1Label <- round(Mean1, digits=3) #this line creates the label for the 1 percent mean by rounding it to 3 decimal places
+Mean10Label <- round(Mean10, digits=3) #this line creates the label for the 10 percent mean by rounding it to 3 decimal places
+Mean25Label <- round(Mean25, digits=3) #this line creates the label for the 25 percent mean by rounding it to 3 decimal places
+Mean50Label <- round(Mean50, digits=3) #this line creates the label for the 50 percent mean by rounding it to 3 decimal places
+Mean80Label <- round(Mean80, digits=3) #this line creates the label for the 80 percent mean by rounding it to 3 decimal places
+
+Q6 <- ggplot(sample100percent, aes(x=sample100percent$Whole_wgt)) + geom_histogram(colour='gray',fill='gray')#this line creates a histogram of the 100 percent sample data and sets the fill and colour to be gray 
+
+Q6 <- Q6 + geom_vline(xintercept=Mean1, colour='red') + #this line adds a vertical line for the 1 percent mean
+  annotate("text",x=Mean1,y=0,label=Mean1Label,hjust=0) + #this line adds the label for the 1 percent mean
+  geom_vline(xintercept=Mean10, colour='red') + #this line adds a vertical line for the 10 percent mean
+  annotate("text",x=Mean10,y=0,label=Mean10Label,hjust=0) + #this line adds the label for the 10 percent mean
+  geom_vline(xintercept=Mean25, colour='red') + #this line adds a vertical line for the 25 percent mean
+  annotate("text",x=Mean25,y=0,label=Mean25Label,hjust=0) + #this line adds the label for the 25 percent mean
+  geom_vline(xintercept=Mean50, colour='red') + #this line adds a vertical line for the 50 percent mean
+  annotate("text",x=Mean50,y=0,label=Mean50Label,hjust=0) + #this line adds the label for the 50 percent mean
+  geom_vline(xintercept=Mean80, colour='red') + #this line adds a vertical line for the 80 percent mean
+  annotate("text",x=Mean80,y=0,label=Mean80Label,hjust=0) #this line adds the label for the 80 percent mean
+
+print(Q6) #this line prints the Q6 histogram
+```
+
+```{r}
+#problem 7
+
+ReMean1 <- totaldf[7,1] #this line gets the resample mean of the 1 percent sample from the totaldf
+ReMean10 <- totaldf[7,2] #this line gets the resample mean of the 10 percent sample from the totaldf
+ReMean25 <- totaldf[7,3] #this line gets the resample mean of the 25 percent sample from the totaldf
+ReMean50 <- totaldf[7,4] #this line gets the resample mean of the 50 percent sample from the totaldf
+ReMean80 <- totaldf[7,5] #this line gets the resample mean of the 80 percent sample from the totaldf
+
+ReMean1Label <- round(ReMean1, digits=3) #this line creates the label for the 1 percent resample mean by rounding it to 3 decimal places
+ReMean10Label <- round(ReMean10, digits=3) #this line creates the label for the 10 percent resample mean by rounding it to 3 decimal places
+ReMean25Label <- round(ReMean25, digits=3) #this line creates the label for the 25 percent resample mean by rounding it to 3 decimal places
+ReMean50Label <- round(ReMean50, digits=3) #this line creates the label for the 50 percent resample mean by rounding it to 3 decimal places
+ReMean80Label <- round(ReMean80, digits=3) #this line creates the label for the 80 percent resample mean by rounding it to 3 decimal places
+
+Q7 <- ggplot(sample100percent, aes(x=sample100percent$Whole_wgt)) + geom_histogram(colour='gray',fill='gray') #this line creates a histogram of the 100 percent sample data and sets the fill and colour to be gray 
+
+
+Q7 <- Q7 + geom_vline(xintercept=ReMean1, colour='red') + #this line adds a vertical line for the 1 percent resample mean
+  annotate("text",x=ReMean1,y=0,label=ReMean1Label,hjust=0) + #this line adds the label for the 1 percent resample mean
+  geom_vline(xintercept=ReMean10, colour='red') + #this line adds a vertical line for the 10 percent resample mean
+  annotate("text",x=ReMean10,y=0,label=ReMean10Label,hjust=0) + #this line adds the label for the 10 percent resample mean
+  geom_vline(xintercept=ReMean25, colour='red') + #this line adds a vertical line for the 25 percent resample mean
+  annotate("text",x=ReMean25,y=0,label=ReMean25Label,hjust=0) + #this line adds the label for the 25 percent resample mean
+  geom_vline(xintercept=ReMean50, colour='red') + #this line adds a vertical line for the 50 percent resample mean
+  annotate("text",x=ReMean50,y=0,label=ReMean50Label,hjust=0) + #this line adds the label for the 50 percent resample mean
+  geom_vline(xintercept=ReMean80, colour='red') + #this line adds a vertical line for the 80 percent resample mean
+  annotate("text",x=ReMean80,y=0,label=ReMean80Label,hjust=0) #this line adds the label for the 80 percent resample mean
+
+print(Q7) #this line prints the Q7 histogram
+
+```
+
+```{r}
+#problem 8 using diamonds$carat
+
+#problem 1 and 2
+
+row1 <- round(nrow(diamonds)/100) #this line calculates the number of rows for the 1 percent sample. It uses the round function in case the product is a decimal
+sample1percent <- randomSample(diamonds, row1, FALSE) #this line takes a 1 percent random sample from the diamonds data frame
+histogram1 <- ggplot(sample1percent, aes(x=sample1percent$carat)) + geom_histogram() #this line creates a histogram of the carat column from the 1 percent sample
+percent1 <- c(min(sample1percent$carat), max(sample1percent$carat), mean(sample1percent$carat), var(sample1percent$carat)) #this line creates a vector with the min, max, mean, and variance from the 1 percent sample
+
+row10 <- round(nrow(diamonds)*10/100) #this line calculates the number of rows for the 10 percent sample. It uses the round function in case the product is a decimal
+sample10percent <- randomSample(diamonds, row10, FALSE) #this line takes a 10 percent random sample from the diamonds data frame
+histogram10 <- ggplot(sample10percent, aes(x=sample10percent$carat)) + geom_histogram() #this line creates a histogram of the carat column from the 10 percent sample
+percent10 <- c(min(sample10percent$carat), max(sample10percent$carat), mean(sample10percent$carat), var(sample10percent$carat)) #this line creates a vector with the min, max, mean, and variance from the 10 percent sample
+
+row25 <- round(nrow(diamonds)*25/100) #this line calculates the number of rows for the 25 percent sample. It uses the round function in case the product is a decimal
+sample25percent <- randomSample(diamonds, row25, FALSE) #this line takes a 25 percent random sample from the diamonds data frame
+histogram25 <- ggplot(sample25percent, aes(x=sample25percent$carat)) + geom_histogram() #this line creates a histogram of the carat column from the 25 percent sample
+percent25 <- c(min(sample25percent$carat), max(sample25percent$carat), mean(sample25percent$carat), var(sample25percent$carat)) #this line creates a vector with the min, max, mean, and variance from the 25 percent sample
+
+row50 <- round(nrow(diamonds)*50/100) #this line calculates the number of rows for the 50 percent sample. It uses the round function in case the product is a decimal.
+sample50percent <- randomSample(diamonds, row50, FALSE) #this line takes a 50 percent random sample from the diamonds data frame
+histogram50 <- ggplot(sample50percent, aes(x=sample50percent$carat)) + geom_histogram() #this line creates a histogram of the carat column from the 50 percent sample
+percent50 <- c(min(sample50percent$carat), max(sample50percent$carat), mean(sample50percent$carat), var(sample50percent$carat)) #this line creates a vector with the min, max, mean, and variance from the 50 percent sample
+
+row80 <- round(nrow(diamonds)*80/100) #this line calculates the number of rows for the 80 percent sample. It uses the round function in case the product is a decimal.
+sample80percent <- randomSample(diamonds, row80, FALSE) #this line takes a 80 percent random sample from the diamonds data frame
+histogram80 <- ggplot(sample80percent, aes(x=sample80percent$carat)) + geom_histogram() #this line creates a histogram of the carat column from the 80 percent sample
+percent80 <- c(min(sample80percent$carat), max(sample80percent$carat), mean(sample80percent$carat), var(sample80percent$carat)) #this line creates a vector with the min, max, mean, and variance from the 80 percent sample
+
+row100 <- nrow(diamonds) #this line calculates the number of rows for the 100 percent sample
+sample100percent <- randomSample(diamonds, row100, FALSE) #this line takes a 100 percent random sample from the diamonds data frame
+histogram100 <- ggplot(sample100percent, aes(x=sample100percent$carat)) + geom_histogram() #this line creates a histogram of the carat column from the 100 percent sample
+percent100 <- c(min(sample100percent$carat), max(sample100percent$carat), mean(sample100percent$carat), var(sample100percent$carat)) #this line creates a vector with the min, max, mean, and variance from the 100 percent sample
+
+
+#problem 1
+problem1df <- data.frame(percent1,percent10,percent25,percent50,percent80,percent100) #this line creates a data frame of the vectors of the min, max, mean, and variance for each sample size
+rownames(problem1df) <- c("SampleMin","SampleMax","SampleMean","SampleVar") #this column creates the row names for the data frame
+colnames(problem1df) <- c("1%Sample","10%Sample","25%Sample","50%Sample","80%Sample","100%Sample") #this column creates the column names for the data frame
+problem1df #this column returns the data frame with the min, max, mean, and variance for each sample size
+
+
+#problem 2
+grid.arrange(histogram1,histogram10,histogram25,histogram50,histogram80,histogram100, ncol=2) #this line creates a grid of the histograms for each sample size
+
+```
+
+```{r}
+#problem 3
+OnePercentMean <- numeric() #this line creates an empty numeric vector
+TenPercentMean <- numeric() #this line creates an empty numeric vector
+TwentyFivePercentMean <- numeric() #this line creates an empty numeric vector
+FiftyPercentMean <- numeric() #this line creates an empty numeric vector
+EightyPercentMean <- numeric() #this line creates an empty numeric vector
+
+for (i in 1:1000){ #this for loop will repeat 1000 times 
+  onesample <- randomSample(diamonds, row1, FALSE) #this line takes a 1 percent sample from the diamonds data frame
+  OnePercentMean[[i]] <- mean(onesample$carat) #this line calculates the mean of the 1 percent sample and adds it to the vector
+  
+  tensample <- randomSample(diamonds, row10, FALSE) #this line takes a 10 percent sample from the diamonds data frame
+  TenPercentMean[[i]] <- mean(tensample$carat) #this line calculates the mean of the 10 percent sample and adds it to the vector
+  
+  twentyfivesample <- randomSample(diamonds, row25, FALSE) #this line takes a 25 percent sample from the diamonds data frame
+  TwentyFivePercentMean[[i]] <- mean(twentyfivesample$carat) #this line calculates the mean of the 25 percent sample and adds it to the vector
+  
+  fiftysample <- randomSample(diamonds, row50, FALSE) #this line takes a 50 percent sample from the diamonds data frame
+  FiftyPercentMean[[i]] <- mean(fiftysample$carat) #this line calculates the mean of the 50 percent sample and adds it to the vector
+  
+  eightysample <- randomSample(diamonds, row80, FALSE) #this line takes a 80 percent sample from the diamonds data frame
+  EightyPercentMean[[i]] <- mean(eightysample$carat) #this line calculates the mean of the 80 percent sample and adds it to the vector
+}
+
+problem3df <- data.frame(OnePercentMean,TenPercentMean,TwentyFivePercentMean,FiftyPercentMean,EightyPercentMean) #this line creates the data frame from the vectors of means for each sample size
+
+
+```
+
+```{r}
+#problem 4
+outputlist <- list() #this line creates an empty vector
+
+for (i in 1:length(problem3df)){ #for the length of the problem3df data frame
+  x <- problem3df[[i]] #this line sets x to be the ith column of the problem3df data frame
+  outputlist[[i]] <- ggplot(data.frame(x),aes(x)) + geom_histogram() + labs(x=names(problem3df)[[i]]) #this line creates a ggplot of the ith column problem3df data frame and adds a label with the column name
+}
+
+problem4histogram <- ggplot(sample100percent,aes(x=sample100percent$carat)) + geom_histogram() #this line creates a histogram of the carat column from the 100 percent sample
+
+grid.arrange(outputlist[[1]],outputlist[[2]],outputlist[[3]],outputlist[[4]],outputlist[[5]],problem4histogram, ncol=2) #this line creates a grid of histgrams with the histograms of the means from each size and the histogram of the 100% sample
+
+```
+
+```{r}
+#problem 5
+percent1 <- c(min(problem3df$OnePercentMean),max(problem3df$OnePercentMean),mean(problem3df$OnePercentMean),var(problem3df$OnePercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 1 percent sample means
+percent10 <- c(min(problem3df$TenPercentMean),max(problem3df$TenPercentMean),mean(problem3df$TenPercentMean),var(problem3df$TenPercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 10 percent sample means
+percent25 <- c(min(problem3df$TwentyFivePercentMean),max(problem3df$TwentyFivePercentMean),mean(problem3df$TwentyFivePercentMean),var(problem3df$TwentyFivePercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 25 percent sample means
+percent50 <- c(min(problem3df$FiftyPercentMean),max(problem3df$FiftyPercentMean),mean(problem3df$FiftyPercentMean),var(problem3df$FiftyPercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 50 percent sample means
+percent80 <- c(min(problem3df$EightyPercentMean),max(problem3df$EightyPercentMean),mean(problem3df$EightyPercentMean),var(problem3df$EightyPercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 80 percent sample means
+percent100 <- c(min(sample100percent$carat),max(sample100percent$carat),mean(sample100percent$carat),var(sample100percent$carat)) #this line creates a vector of the min, max, mean, and variance of the 100 percent sample
+
+problem5df <- data.frame(percent1,percent10,percent25,percent50,percent80,percent100) #this line creates a data frame of the vectors of the min, max, mean, and variance of the mean column for each sample size. The vector of the min, max, mean, and variance of the 100 percent sample is also included.
+
+rownames(problem5df) <- c("ReSampleMin", "ReSampleMax", "ReSampleMean", "ReSampleVariance") #this line creates the row names for the problem5df data frame
+
+colnames(problem5df) <- c("1%Sample","10%Sample","25%Sample","50%Sample","80%Sample","100%Sample") #this line creates the column names for the problem5df data frame
+
+problem5df #this line returns the problem5df
+
+totaldf <- rbind(problem1df, problem5df) #this line appends the problem5df to the data frame created in problem 1, the problem1df
+totaldf #this line returns the totaldf
+```
+
+```{r}
+#problem 6
+Mean1 <- totaldf[3,1] #this line gets the mean of the 1 percent sample from the totaldf
+Mean10 <- totaldf[3,2] #this line gets the mean of the 10 percent sample from the totaldf
+Mean25 <- totaldf[3,3] #this line gets the mean of the 25 percent sample from the totaldf
+Mean50 <- totaldf[3,4] #this line gets the mean of the 50 percent sample from the totaldf
+Mean80 <- totaldf[3,5] #this line gets the mean of the 80 percent sample from the totaldf
+
+Mean1Label <- round(Mean1, digits=3) #this line creates the label for the 1 percent mean by rounding it to 3 decimal places
+Mean10Label <- round(Mean10, digits=3) #this line creates the label for the 10 percent mean by rounding it to 3 decimal places
+Mean25Label <- round(Mean25, digits=3) #this line creates the label for the 25 percent mean by rounding it to 3 decimal places
+Mean50Label <- round(Mean50, digits=3) #this line creates the label for the 50 percent mean by rounding it to 3 decimal places
+Mean80Label <- round(Mean80, digits=3) #this line creates the label for the 80 percent mean by rounding it to 3 decimal places
+
+Q6 <- ggplot(sample100percent, aes(x=sample100percent$carat)) + geom_histogram(colour='gray',fill='gray')#this line creates a histogram of the 100 percent sample data and sets the fill and colour to be gray 
+
+Q6 <- Q6 + geom_vline(xintercept=Mean1, colour='red') + #this line adds a vertical line for the 1 percent mean
+  annotate("text",x=Mean1,y=0,label=Mean1Label,hjust=0) + #this line adds the label for the 1 percent mean
+  geom_vline(xintercept=Mean10, colour='red') + #this line adds a vertical line for the 10 percent mean
+  annotate("text",x=Mean10,y=0,label=Mean10Label,hjust=0) + #this line adds the label for the 10 percent mean
+  geom_vline(xintercept=Mean25, colour='red') + #this line adds a vertical line for the 25 percent mean
+  annotate("text",x=Mean25,y=0,label=Mean25Label,hjust=0) + #this line adds the label for the 25 percent mean
+  geom_vline(xintercept=Mean50, colour='red') + #this line adds a vertical line for the 50 percent mean
+  annotate("text",x=Mean50,y=0,label=Mean50Label,hjust=0) + #this line adds the label for the 50 percent mean
+  geom_vline(xintercept=Mean80, colour='red') + #this line adds a vertical line for the 80 percent mean
+  annotate("text",x=Mean80,y=0,label=Mean80Label,hjust=0) #this line adds the label for the 80 percent mean
+
+print(Q6) #this line prints the Q6 histogram
+```
+
+```{r}
+#problem 7
+
+ReMean1 <- totaldf[7,1] #this line gets the resample mean of the 1 percent sample from the totaldf
+ReMean10 <- totaldf[7,2] #this line gets the resample mean of the 10 percent sample from the totaldf
+ReMean25 <- totaldf[7,3] #this line gets the resample mean of the 25 percent sample from the totaldf
+ReMean50 <- totaldf[7,4] #this line gets the resample mean of the 50 percent sample from the totaldf
+ReMean80 <- totaldf[7,5] #this line gets the resample mean of the 80 percent sample from the totaldf
+
+ReMean1Label <- round(ReMean1, digits=3) #this line creates the label for the 1 percent resample mean by rounding it to 3 decimal places
+ReMean10Label <- round(ReMean10, digits=3) #this line creates the label for the 10 percent resample mean by rounding it to 3 decimal places
+ReMean25Label <- round(ReMean25, digits=3) #this line creates the label for the 25 percent resample mean by rounding it to 3 decimal places
+ReMean50Label <- round(ReMean50, digits=3) #this line creates the label for the 50 percent resample mean by rounding it to 3 decimal places
+ReMean80Label <- round(ReMean80, digits=3) #this line creates the label for the 80 percent resample mean by rounding it to 3 decimal places
+
+Q7 <- ggplot(sample100percent, aes(x=sample100percent$carat)) + geom_histogram(colour='gray',fill='gray') #this line creates a histogram of the 100 percent sample data and sets the fill and colour to be gray 
+
+
+Q7 <- Q7 + geom_vline(xintercept=ReMean1, colour='red') + #this line adds a vertical line for the 1 percent resample mean
+  annotate("text",x=ReMean1,y=0,label=ReMean1Label,hjust=0) + #this line adds the label for the 1 percent resample mean
+  geom_vline(xintercept=ReMean10, colour='red') + #this line adds a vertical line for the 10 percent resample mean
+  annotate("text",x=ReMean10,y=0,label=ReMean10Label,hjust=0) + #this line adds the label for the 10 percent resample mean
+  geom_vline(xintercept=ReMean25, colour='red') + #this line adds a vertical line for the 25 percent resample mean
+  annotate("text",x=ReMean25,y=0,label=ReMean25Label,hjust=0) + #this line adds the label for the 25 percent resample mean
+  geom_vline(xintercept=ReMean50, colour='red') + #this line adds a vertical line for the 50 percent resample mean
+  annotate("text",x=ReMean50,y=0,label=ReMean50Label,hjust=0) + #this line adds the label for the 50 percent resample mean
+  geom_vline(xintercept=ReMean80, colour='red') + #this line adds a vertical line for the 80 percent resample mean
+  annotate("text",x=ReMean80,y=0,label=ReMean80Label,hjust=0) #this line adds the label for the 80 percent resample mean
+
+print(Q7) #this line prints the Q7 histogram
+
+```
+
+```{r}
+#problem 8 using faithful$eruptions
+
+#problem 1 and 2
+
+row1 <- round(nrow(faithful)/100) #this line calculates the number of rows for the 1 percent sample. It uses the round function in case the product is a decimal
+sample1percent <- randomSample(faithful, row1, FALSE) #this line takes a 1 percent random sample from the faithful data frame
+histogram1 <- ggplot(sample1percent, aes(x=sample1percent$eruptions)) + geom_histogram() #this line creates a histogram of the eruptions column from the 1 percent sample
+percent1 <- c(min(sample1percent$eruptions), max(sample1percent$eruptions), mean(sample1percent$eruptions), var(sample1percent$eruptions)) #this line creates a vector with the min, max, mean, and variance from the 1 percent sample
+
+row10 <- round(nrow(faithful)*10/100) #this line calculates the number of rows for the 10 percent sample. It uses the round function in case the product is a decimal
+sample10percent <- randomSample(faithful, row10, FALSE) #this line takes a 10 percent random sample from the faithful data frame
+histogram10 <- ggplot(sample10percent, aes(x=sample10percent$eruptions)) + geom_histogram() #this line creates a histogram of the eruptions column from the 10 percent sample
+percent10 <- c(min(sample10percent$eruptions), max(sample10percent$eruptions), mean(sample10percent$eruptions), var(sample10percent$eruptions)) #this line creates a vector with the min, max, mean, and variance from the 10 percent sample
+
+row25 <- round(nrow(faithful)*25/100) #this line calculates the number of rows for the 25 percent sample. It uses the round function in case the product is a decimal
+sample25percent <- randomSample(faithful, row25, FALSE) #this line takes a 25 percent random sample from the faithful data frame
+histogram25 <- ggplot(sample25percent, aes(x=sample25percent$eruptions)) + geom_histogram() #this line creates a histogram of the eruptions column from the 25 percent sample
+percent25 <- c(min(sample25percent$eruptions), max(sample25percent$eruptions), mean(sample25percent$eruptions), var(sample25percent$eruptions)) #this line creates a vector with the min, max, mean, and variance from the 25 percent sample
+
+row50 <- round(nrow(faithful)*50/100) #this line calculates the number of rows for the 50 percent sample. It uses the round function in case the product is a decimal.
+sample50percent <- randomSample(faithful, row50, FALSE) #this line takes a 50 percent random sample from the faithful data frame
+histogram50 <- ggplot(sample50percent, aes(x=sample50percent$eruptions)) + geom_histogram() #this line creates a histogram of the eruptions column from the 50 percent sample
+percent50 <- c(min(sample50percent$eruptions), max(sample50percent$eruptions), mean(sample50percent$eruptions), var(sample50percent$eruptions)) #this line creates a vector with the min, max, mean, and variance from the 50 percent sample
+
+row80 <- round(nrow(faithful)*80/100) #this line calculates the number of rows for the 80 percent sample. It uses the round function in case the product is a decimal.
+sample80percent <- randomSample(faithful, row80, FALSE) #this line takes a 80 percent random sample from the faithful data frame
+histogram80 <- ggplot(sample80percent, aes(x=sample80percent$eruptions)) + geom_histogram() #this line creates a histogram of the eruptions column from the 80 percent sample
+percent80 <- c(min(sample80percent$eruptions), max(sample80percent$eruptions), mean(sample80percent$eruptions), var(sample80percent$eruptions)) #this line creates a vector with the min, max, mean, and variance from the 80 percent sample
+
+row100 <- nrow(faithful) #this line calculates the number of rows for the 100 percent sample
+sample100percent <- randomSample(faithful, row100, FALSE) #this line takes a 100 percent random sample from the faithful data frame
+histogram100 <- ggplot(sample100percent, aes(x=sample100percent$eruptions)) + geom_histogram() #this line creates a histogram of the eruptions column from the 100 percent sample
+percent100 <- c(min(sample100percent$eruptions), max(sample100percent$eruptions), mean(sample100percent$eruptions), var(sample100percent$eruptions)) #this line creates a vector with the min, max, mean, and variance from the 100 percent sample
+
+
+#problem 1
+problem1df <- data.frame(percent1,percent10,percent25,percent50,percent80,percent100) #this line creates a data frame of the vectors of the min, max, mean, and variance for each sample size
+rownames(problem1df) <- c("SampleMin","SampleMax","SampleMean","SampleVar") #this column creates the row names for the data frame
+colnames(problem1df) <- c("1%Sample","10%Sample","25%Sample","50%Sample","80%Sample","100%Sample") #this column creates the column names for the data frame
+problem1df #this column returns the data frame with the min, max, mean, and variance for each sample size
+
+
+#problem 2
+grid.arrange(histogram1,histogram10,histogram25,histogram50,histogram80,histogram100, ncol=2) #this line creates a grid of the histograms for each sample size
+
+```
+
+```{r}
+#problem 3
+OnePercentMean <- numeric() #this line creates an empty numeric vector
+TenPercentMean <- numeric() #this line creates an empty numeric vector
+TwentyFivePercentMean <- numeric() #this line creates an empty numeric vector
+FiftyPercentMean <- numeric() #this line creates an empty numeric vector
+EightyPercentMean <- numeric() #this line creates an empty numeric vector
+
+for (i in 1:1000){ #this for loop will repeat 1000 times 
+  onesample <- randomSample(faithful, row1, FALSE) #this line takes a 1 percent sample from the faithful data frame
+  OnePercentMean[[i]] <- mean(onesample$eruptions) #this line calculates the mean of the 1 percent sample and adds it to the vector
+  
+  tensample <- randomSample(faithful, row10, FALSE) #this line takes a 10 percent sample from the faithful data frame
+  TenPercentMean[[i]] <- mean(tensample$eruptions) #this line calculates the mean of the 10 percent sample and adds it to the vector
+  
+  twentyfivesample <- randomSample(faithful, row25, FALSE) #this line takes a 25 percent sample from the faithful data frame
+  TwentyFivePercentMean[[i]] <- mean(twentyfivesample$eruptions) #this line calculates the mean of the 25 percent sample and adds it to the vector
+  
+  fiftysample <- randomSample(faithful, row50, FALSE) #this line takes a 50 percent sample from the faithful data frame
+  FiftyPercentMean[[i]] <- mean(fiftysample$eruptions) #this line calculates the mean of the 50 percent sample and adds it to the vector
+  
+  eightysample <- randomSample(faithful, row80, FALSE) #this line takes a 80 percent sample from the faithful data frame
+  EightyPercentMean[[i]] <- mean(eightysample$eruptions) #this line calculates the mean of the 80 percent sample and adds it to the vector
+}
+
+problem3df <- data.frame(OnePercentMean,TenPercentMean,TwentyFivePercentMean,FiftyPercentMean,EightyPercentMean) #this line creates the data frame from the vectors of means for each sample size
+
+
+```
+
+```{r}
+#problem 4
+outputlist <- list() #this line creates an empty vector
+
+for (i in 1:length(problem3df)){ #for the length of the problem3df data frame
+  x <- problem3df[[i]] #this line sets x to be the ith column of the problem3df data frame
+  outputlist[[i]] <- ggplot(data.frame(x),aes(x)) + geom_histogram() + labs(x=names(problem3df)[[i]]) #this line creates a ggplot of the ith column problem3df data frame and adds a label with the column name
+}
+
+problem4histogram <- ggplot(sample100percent,aes(x=sample100percent$eruptions)) + geom_histogram() #this line creates a histogram of the eruptions column from the 100 percent sample
+
+grid.arrange(outputlist[[1]],outputlist[[2]],outputlist[[3]],outputlist[[4]],outputlist[[5]],problem4histogram, ncol=2) #this line creates a grid of histgrams with the histograms of the means from each size and the histogram of the 100% sample
+
+```
+
+```{r}
+#problem 5
+percent1 <- c(min(problem3df$OnePercentMean),max(problem3df$OnePercentMean),mean(problem3df$OnePercentMean),var(problem3df$OnePercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 1 percent sample means
+percent10 <- c(min(problem3df$TenPercentMean),max(problem3df$TenPercentMean),mean(problem3df$TenPercentMean),var(problem3df$TenPercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 10 percent sample means
+percent25 <- c(min(problem3df$TwentyFivePercentMean),max(problem3df$TwentyFivePercentMean),mean(problem3df$TwentyFivePercentMean),var(problem3df$TwentyFivePercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 25 percent sample means
+percent50 <- c(min(problem3df$FiftyPercentMean),max(problem3df$FiftyPercentMean),mean(problem3df$FiftyPercentMean),var(problem3df$FiftyPercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 50 percent sample means
+percent80 <- c(min(problem3df$EightyPercentMean),max(problem3df$EightyPercentMean),mean(problem3df$EightyPercentMean),var(problem3df$EightyPercentMean)) #this line creates a vector of the min, max, mean, and variance of the column of 80 percent sample means
+percent100 <- c(min(sample100percent$eruptions),max(sample100percent$eruptions),mean(sample100percent$eruptions),var(sample100percent$eruptions)) #this line creates a vector of the min, max, mean, and variance of the 100 percent sample
+
+problem5df <- data.frame(percent1,percent10,percent25,percent50,percent80,percent100) #this line creates a data frame of the vectors of the min, max, mean, and variance of the mean column for each sample size. The vector of the min, max, mean, and variance of the 100 percent sample is also included.
+
+rownames(problem5df) <- c("ReSampleMin", "ReSampleMax", "ReSampleMean", "ReSampleVariance") #this line creates the row names for the problem5df data frame
+
+colnames(problem5df) <- c("1%Sample","10%Sample","25%Sample","50%Sample","80%Sample","100%Sample") #this line creates the column names for the problem5df data frame
+
+problem5df #this line returns the problem5df
+
+totaldf <- rbind(problem1df, problem5df) #this line appends the problem5df to the data frame created in problem 1, the problem1df
+totaldf #this line returns the totaldf
+```
+
+```{r}
+#problem 6
+Mean1 <- totaldf[3,1] #this line gets the mean of the 1 percent sample from the totaldf
+Mean10 <- totaldf[3,2] #this line gets the mean of the 10 percent sample from the totaldf
+Mean25 <- totaldf[3,3] #this line gets the mean of the 25 percent sample from the totaldf
+Mean50 <- totaldf[3,4] #this line gets the mean of the 50 percent sample from the totaldf
+Mean80 <- totaldf[3,5] #this line gets the mean of the 80 percent sample from the totaldf
+
+Mean1Label <- round(Mean1, digits=3) #this line creates the label for the 1 percent mean by rounding it to 3 decimal places
+Mean10Label <- round(Mean10, digits=3) #this line creates the label for the 10 percent mean by rounding it to 3 decimal places
+Mean25Label <- round(Mean25, digits=3) #this line creates the label for the 25 percent mean by rounding it to 3 decimal places
+Mean50Label <- round(Mean50, digits=3) #this line creates the label for the 50 percent mean by rounding it to 3 decimal places
+Mean80Label <- round(Mean80, digits=3) #this line creates the label for the 80 percent mean by rounding it to 3 decimal places
+
+Q6 <- ggplot(sample100percent, aes(x=sample100percent$eruptions)) + geom_histogram(colour='gray',fill='gray')#this line creates a histogram of the 100 percent sample data and sets the fill and colour to be gray 
+
+Q6 <- Q6 + geom_vline(xintercept=Mean1, colour='red') + #this line adds a vertical line for the 1 percent mean
+  annotate("text",x=Mean1,y=0,label=Mean1Label,hjust=0) + #this line adds the label for the 1 percent mean
+  geom_vline(xintercept=Mean10, colour='red') + #this line adds a vertical line for the 10 percent mean
+  annotate("text",x=Mean10,y=0,label=Mean10Label,hjust=0) + #this line adds the label for the 10 percent mean
+  geom_vline(xintercept=Mean25, colour='red') + #this line adds a vertical line for the 25 percent mean
+  annotate("text",x=Mean25,y=0,label=Mean25Label,hjust=0) + #this line adds the label for the 25 percent mean
+  geom_vline(xintercept=Mean50, colour='red') + #this line adds a vertical line for the 50 percent mean
+  annotate("text",x=Mean50,y=0,label=Mean50Label,hjust=0) + #this line adds the label for the 50 percent mean
+  geom_vline(xintercept=Mean80, colour='red') + #this line adds a vertical line for the 80 percent mean
+  annotate("text",x=Mean80,y=0,label=Mean80Label,hjust=0) #this line adds the label for the 80 percent mean
+
+print(Q6) #this line prints the Q6 histogram
+```
+
+```{r}
+#problem 7
+
+ReMean1 <- totaldf[7,1] #this line gets the resample mean of the 1 percent sample from the totaldf
+ReMean10 <- totaldf[7,2] #this line gets the resample mean of the 10 percent sample from the totaldf
+ReMean25 <- totaldf[7,3] #this line gets the resample mean of the 25 percent sample from the totaldf
+ReMean50 <- totaldf[7,4] #this line gets the resample mean of the 50 percent sample from the totaldf
+ReMean80 <- totaldf[7,5] #this line gets the resample mean of the 80 percent sample from the totaldf
+
+ReMean1Label <- round(ReMean1, digits=3) #this line creates the label for the 1 percent resample mean by rounding it to 3 decimal places
+ReMean10Label <- round(ReMean10, digits=3) #this line creates the label for the 10 percent resample mean by rounding it to 3 decimal places
+ReMean25Label <- round(ReMean25, digits=3) #this line creates the label for the 25 percent resample mean by rounding it to 3 decimal places
+ReMean50Label <- round(ReMean50, digits=3) #this line creates the label for the 50 percent resample mean by rounding it to 3 decimal places
+ReMean80Label <- round(ReMean80, digits=3) #this line creates the label for the 80 percent resample mean by rounding it to 3 decimal places
+
+Q7 <- ggplot(sample100percent, aes(x=sample100percent$eruptions)) + geom_histogram(colour='gray',fill='gray') #this line creates a histogram of the 100 percent sample data and sets the fill and colour to be gray 
+
+
+Q7 <- Q7 + geom_vline(xintercept=ReMean1, colour='red') + #this line adds a vertical line for the 1 percent resample mean
+  annotate("text",x=ReMean1,y=0,label=ReMean1Label,hjust=0) + #this line adds the label for the 1 percent resample mean
+  geom_vline(xintercept=ReMean10, colour='red') + #this line adds a vertical line for the 10 percent resample mean
+  annotate("text",x=ReMean10,y=0,label=ReMean10Label,hjust=0) + #this line adds the label for the 10 percent resample mean
+  geom_vline(xintercept=ReMean25, colour='red') + #this line adds a vertical line for the 25 percent resample mean
+  annotate("text",x=ReMean25,y=0,label=ReMean25Label,hjust=0) + #this line adds the label for the 25 percent resample mean
+  geom_vline(xintercept=ReMean50, colour='red') + #this line adds a vertical line for the 50 percent resample mean
+  annotate("text",x=ReMean50,y=0,label=ReMean50Label,hjust=0) + #this line adds the label for the 50 percent resample mean
+  geom_vline(xintercept=ReMean80, colour='red') + #this line adds a vertical line for the 80 percent resample mean
+  annotate("text",x=ReMean80,y=0,label=ReMean80Label,hjust=0) #this line adds the label for the 80 percent resample mean
+
+print(Q7) #this line prints the Q7 histogram
+```
+
+```{r}
+#problem 9
+
+#In problem 1, I observed that as the sample size increases the min and max of the samples tends to get closer to the min and max of the total dataset. This is not always the case because the samples are random. The mean and variance for the different sample sizes was consistent between the sample sizes with the one percent mean and variance tending to be the most different from the total dataset mean and variance.
+
+#In problem 2, I observed that as the sample size increases, the histograms look closer to the histogram of the total data set.
+
+#In problem 3 and 4, I observed that the histograms of the means of the sample sizes look more normal than the histograms of the actual data. The histograms of the means have a peak in the center and tails on both sides. Also, As the sample size increases, the means of the sample size have a smaller range.
+
+#In problem 5, I observed that as the sample size increases, the resample mean (the mean of the means) gets closer to the mean of the total data set. Also, as the sample size increases, the resample variance (the variance of the means) decreases.
+
+#In problems 6 and 7, I observed that the resample means (the mean of the means) are closer together than the means for the different sample sizes
+
+```
